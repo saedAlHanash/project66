@@ -90,9 +90,9 @@ class _ScanPageState extends State<ScanPage> {
               data: state.result
                   .map(
                     (e) => [
-                      e.scanNumber,
+                      e.scanNumber.toString(),
                       e.name,
-                      (num.tryParse(e.amount) ?? 0).formatPrice,
+                      e.amount.formatPrice,
                       InkWell(
                         onTap: () {
                           NoteMessage.showCheckDialog(
@@ -119,7 +119,10 @@ class _ScanPageState extends State<ScanPage> {
                       ),
                     ],
                   )
-                  .toList(),
+                  .toList()
+                ..add([
+                  state.result.map((e) => e.amount).reduce((a, b) => a + b).formatPrice
+                ]),
             );
           },
         ),

@@ -37,12 +37,7 @@ class TempCubit extends MCubit<TempInitial> {
       url: GetUrl.temp,
       query: {'Id': state.request},
     );
-
-    if (response.statusCode.success) {
-      return Pair(Temp.fromJson(response.jsonBody), null);
-    } else {
-      return response.getPairError;
-    }
+    return Pair(null,null);
   }
   void setTemp(dynamic temp) {
     if(temp is! Temp)return;

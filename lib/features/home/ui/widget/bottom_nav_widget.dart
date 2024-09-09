@@ -93,6 +93,19 @@ class _NewNavState extends State<NewNav> {
               ),
               label: 'سجلات المسح',
             ),
+            BottomNavigationBarItem(
+              icon: ImageMultiType(
+                url: Icons.settings,
+                color: Colors.grey,
+                height: 25.0.spMin,
+              ),
+              activeIcon: ImageMultiType(
+                url: Icons.settings,
+                color: AppColorManager.mainColor,
+                height: 25.0.spMin,
+              ),
+              label: 'إعدادات',
+            ),
           ],
           currentIndex: selectedIndex,
           onTap: (value) {

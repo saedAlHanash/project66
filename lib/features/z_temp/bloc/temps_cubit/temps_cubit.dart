@@ -34,12 +34,7 @@ class TempsCubit extends MCubit<TempsInitial> {
       url: PostUrl.temps,
       body: state.filterRequest?.toJson() ?? {},
     );
-
-    if (response.statusCode.success) {
-      return Pair(Temps.fromJson(response.jsonBody).items, null);
-    } else {
-      return response.getPairError;
-    }
+    return Pair(null,null);
   }
 
   Future<void> addOrUpdateTempToCache(Temp item) async {

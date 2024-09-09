@@ -46,9 +46,9 @@ class SearchPage extends StatelessWidget {
           data: list
               .map(
                 (e) => [
-                  e.scanNumber,
+                  e.scanNumber.toString(),
                   e.name,
-                  (num.tryParse(e.amount) ?? 0).formatPrice,
+                  e.amount.formatPrice,
                   InkWell(
                     onTap: () {
                       NoteMessage.showCheckDialog(
@@ -75,7 +75,9 @@ class SearchPage extends StatelessWidget {
                   ),
                 ],
               )
-              .toList(),
+              .toList()..add([
+            list.map((e) => e.amount).reduce((a, b) => a + b).formatPrice
+          ]),
         ),
       ),
     );

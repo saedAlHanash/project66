@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:collection/collection.dart';
 import 'package:excel/excel.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:hive/hive.dart';
+
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -30,7 +30,7 @@ class ExportReportCubit extends Cubit<ExportReportInitial> {
     await Permission.manageExternalStorage.request();
     await Permission.storage.request();
 
-    var directory = await getDownloadsDirectory();
+    var directory = await getApplicationDocumentsDirectory();
 
     var fName =
         ' تقرير المشروع التنظيمي 66 ${name ?? ''} ${DateTime.now().toIso8601String()}';
@@ -44,8 +44,16 @@ class ExportReportCubit extends Cubit<ExportReportInitial> {
     }
 
     state.excel.delete('Sheet1');
-
-    final file = File(join('${directory?.path}/$fName.xlsx'))
+    try {
+      File(join('/storage/emulated/0/Documents/Project66/$fName.xlsx'))
+        ..createSync(recursive: true)
+        ..writeAsBytesSync(state.excel.save() ?? []);
+      NoteMessage.showSuccessSnackBar(message: 'تم التصدير بنجاح', context: ctx!);
+    } catch (e) {
+      loggerObject.e(e);
+      emit(state.copyWith(statuses: CubitStatuses.error, error: e.toString()));
+    }
+/*    final file = File(join('${directory?.path}/$fName.xlsx'))
       ..createSync(recursive: true)
       ..writeAsBytesSync(state.excel.save() ?? []);
 
@@ -71,7 +79,7 @@ class ExportReportCubit extends Cubit<ExportReportInitial> {
       () {
         emit(state.copyWith(statuses: CubitStatuses.done));
       },
-    );
+    );*/
   }
 
   void export({
@@ -108,8 +116,8 @@ class ExportReportCubit extends Cubit<ExportReportInitial> {
       sheet.appendRow([
         TextCellValue(e.name),
         TextCellValue(e.idNumber),
-        TextCellValue(e.scanNumber),
-        TextCellValue(e.amount),
+        TextCellValue(e.scanNumber.toString()),
+        TextCellValue(e.amount.toString()),
       ]);
     }
   }

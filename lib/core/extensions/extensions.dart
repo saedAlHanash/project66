@@ -10,14 +10,14 @@ import 'package:project66/core/strings/app_color_manager.dart';
 import 'package:project66/core/strings/fix_url.dart';
 
 import '../../generated/l10n.dart';
-import '../api_manager/api_service.dart';
-import '../api_manager/api_url.dart';
+
 import '../app/app_widget.dart';
 import '../error/error_manager.dart';
 import '../strings/enum_manager.dart';
 import '../util/pair_class.dart';
 import '../util/snack_bar_message.dart';
 import '../widgets/spinner_widget.dart';
+
 
 extension SplitByLength on String {
   List<String> splitByLength1(int length, {bool ignoreEmpty = false}) {
@@ -107,13 +107,6 @@ extension StringHelper on String? {
     return this!.trim().isEmpty;
   }
 
-  String fixUrl(dynamic initialImage) {
-    final s = (this?.replaceAll(imagePath, ''));
-    if (s.isBlank) return initialImage;
-    if (s!.toLowerCase().contains('assets')) return initialImage;
-
-    return fixAvatarImage(this);
-  }
 
   num get tryParseOrZero => num.tryParse(this ?? '0') ?? 0;
 
@@ -172,21 +165,6 @@ extension HelperJson on Map<String, dynamic> {
   }
 }
 
-extension ListEnumHelper on List<Enum> {
-  List<SpinnerItem> getSpinnerItems({int? selectedId, Widget? icon}) {
-    return List<SpinnerItem>.from(
-      map(
-        (e) => SpinnerItem(
-          id: e.index.toString(),
-          isSelected: e.index == selectedId,
-          name: e.getName,
-          icon: icon,
-          item: e,
-        ),
-      ),
-    );
-  }
-}
 
 extension EnumHelper on Enum {
   String get getName {
@@ -200,27 +178,19 @@ extension EnumHelper on Enum {
   }
 }
 
-extension ResponseHelper on http.Response {
-  Map<String, dynamic> get jsonBody {
-    try {
-      if (body.startsWith('[')) {
-        final convertString = '{"data": $body}';
-        final json = jsonDecode(convertString);
-        return json;
-      }
-      return jsonDecode(body) ?? {};
-    } catch (e) {
-      loggerObject.e('json decode from response : $e');
-      return jsonDecode('{}');
-    }
-  }
-
-  // Pair<T?, String?> getPairError<T>() {
-  //   return Pair(null, ErrorManager.getApiError(this));
-  // }
-  get getPairError {
-    final p = Pair(null, ErrorManager.getApiError(this));
-    return p;
+extension ListEnumHelper<T> on List {
+  List<SpinnerItem> getSpinnerItems({int? selectedId, Widget? icon}) {
+    return List<SpinnerItem>.from(
+      map(
+            (e) => SpinnerItem(
+          id: e.index,
+          isSelected: e.index == selectedId,
+          name: e.name,
+          icon: icon,
+          item: e,
+        ),
+      ),
+    );
   }
 }
 

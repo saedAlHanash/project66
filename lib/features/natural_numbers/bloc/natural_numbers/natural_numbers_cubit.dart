@@ -37,7 +37,8 @@ class NaturalNumbersCubit extends MCubit<NaturalNumbersInitial> {
   Future<void> addNumber(String id, String name) async {
     if (name.isEmpty || id.isEmpty) return;
 
-    if (state.result.firstWhereOrNull((e) => e.id == id) != null) {
+    final oldNum = state.result.firstWhereOrNull((e) => e.id == id);
+    if (oldNum != null && !oldNum.isDeleted) {
       NoteMessage.showErrorSnackBar(message: 'الرقم الوطني موجود مسبقا', context: ctx!);
       return;
     }
@@ -57,7 +58,10 @@ class NaturalNumbersCubit extends MCubit<NaturalNumbersInitial> {
     NoteMessage.showSuccessSnackBar(message: 'تم الحذف', context: ctx!);
   }
 
-  bool isFined(String id) => state.result.firstWhereOrNull((e) => e.id == id) != null;
+  bool isFined(String id) {
+    final oldNum = state.result.firstWhereOrNull((e) => e.id == id);
+    return oldNum != null && !oldNum.isDeleted;
+  }
 
   /// Returns a stream of natural_numbers from Firebase for a given room.
   Future<void> _getNaturalNumbers() async {

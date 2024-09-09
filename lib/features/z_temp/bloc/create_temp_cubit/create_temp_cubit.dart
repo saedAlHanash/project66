@@ -25,7 +25,7 @@ class CreateTempCubit extends Cubit<CreateTempInitial> {
 
     if (pair.first == null) {
       emit(state.copyWith(error: pair.second, statuses: CubitStatuses.error));
-      showErrorFromApi(state);
+
     } else {
       emit(state.copyWith(statuses: CubitStatuses.done, result: pair.first));
     }
@@ -49,9 +49,9 @@ class CreateTempCubit extends Cubit<CreateTempInitial> {
     }
 
     if (response.statusCode.success) {
-      return Pair(Temp.fromJson(response.jsonBody), null);
+      return Pair(Temp.fromJson({}), null);
     } else {
-      return response.getPairError;
+      return Pair(null,null);
     }
   }
 

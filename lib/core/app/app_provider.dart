@@ -47,29 +47,7 @@ class AppProvider {
   }
 
 
-  static bool? get isSignupCashed {
-    if (AppSharedPreference.getStartPage == StartPage.signupOtp) return true;
-    if (AppSharedPreference.getStartPage == StartPage.passwordOtp) return false;
-    return null;
-  }
-
-  static Future<void> logout() async {
-    if (AppSharedPreference.getToken.isEmpty) return;
-    await AppSharedPreference.logout();
-    if (ctx == null) return;
-    ctx!.goNamed(RouteName.login);
-  }
-
-  static Future<void> cachePhone({required String phone, required StartPage type}) async {
-    await AppSharedPreference.cashPhone(phone);
-    await AppSharedPreference.cashStartPage(type);
-  }
 
   static String get getPhoneCached => AppSharedPreference.getPhone;
 }
 
-StartPage get getStartPage {
-  if (AppProvider.isLogin) return StartPage.home;
-
-  return AppSharedPreference.getStartPage;
-}

@@ -65,12 +65,12 @@ class AppSharedPreference {
     await _prefs.remove(_phoneNumber);
   }
 
-  static cashStartPage(StartPage type) async {
+  static Future<void>  cashSortEnum(SortEnum type) async {
     await _prefs.setInt(_screenType, type.index);
   }
 
-  static StartPage get getStartPage =>
-      StartPage.values[_prefs.getInt(_screenType) ?? 0];
+  static SortEnum get getSortEnum =>
+      SortEnum.values[_prefs.getInt(_screenType) ?? 0];
 
   static Future<void> clear() async => await _prefs.clear();
 

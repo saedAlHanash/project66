@@ -8,7 +8,7 @@ import '../../core/api_manager/api_service.dart';
 import '../../core/strings/enum_manager.dart';
 
 const latestUpdateBox = 'latestUpdateBox';
-const version = 2;
+const version = 3;
 
 class CachingService {
   static var timeInterval = 180;

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:project66/core/util/shared_preferences.dart';
 import 'package:project66/core/util/snack_bar_message.dart';
 
 import '../../../../core/api_manager/api_service.dart';
@@ -29,13 +30,13 @@ class ScanCubit extends MCubit<ScanInitial> {
     final noName = data.where((e) => e.name.isEmpty);
     final names = ctx!.read<NaturalNumbersCubit>().state.result;
     noName.map((e) {
-      final name = names.firstWhereOrNull((eName) => e.id == eName.id)?.name ?? '';
+      final name = names.firstWhereOrNull((eName) => e.id.toString() == eName.id)?.name ?? '';
       if (name.isNotEmpty) {
-        updateName(e.id, name);
+        updateName(e.id.toString(), name);
       }
     });
 
-    final allScan = data..sort((a, b) => (b.createdAt).compareTo(a.createdAt));
+    final allScan = _sort(data);
 
     emit(state.copyWith(result: allScan));
 
@@ -44,8 +45,8 @@ class ScanCubit extends MCubit<ScanInitial> {
     _getScan();
   }
 
-  Future<void> delete(String scanNumber) async {
-    await FirebaseFirestore.instance.collection('scan').doc(scanNumber).update({
+  Future<void> delete(num scanNumber) async {
+    await FirebaseFirestore.instance.collection('scan').doc(scanNumber.toString()).update({
       'isDeleted': true,
       'updatedAt': FieldValue.serverTimestamp(),
     });
@@ -63,13 +64,6 @@ class ScanCubit extends MCubit<ScanInitial> {
   Future<void> addScan(String idNumber, String amount, String scanNumber) async {
     if (idNumber.isEmpty || amount.isEmpty || scanNumber.isEmpty) return;
 
-    if ((state.result.firstWhereOrNull((e) =>
-            (e.amount == amount || e.scanNumber == scanNumber) && e.name.isNotEmpty) !=
-        null)) {
-      NoteMessage.showErrorSnackBar(message: 'السند موجود مسبقا', context: ctx!);
-      return;
-    }
-
     final name = ctx!
             .read<NaturalNumbersCubit>()
             .state
@@ -79,12 +73,12 @@ class ScanCubit extends MCubit<ScanInitial> {
         '';
     final json = ScanModel(
       name: name,
-      scanNumber: scanNumber,
+      scanNumber: num.tryParse(scanNumber) ?? 0,
       createdAt: 0,
       updatedAt: 0,
-      id: '0',
+      id: 0,
       idNumber: idNumber,
-      amount: amount,
+      amount: num.tryParse(amount) ?? 0,
     ).toJson();
     json['createdAt'] = FieldValue.serverTimestamp();
     json['updatedAt'] = FieldValue.serverTimestamp();
@@ -98,6 +92,36 @@ class ScanCubit extends MCubit<ScanInitial> {
     if (listJson == null) return;
     final list = listJson.map((e) => ScanModel.fromJson(e)).toList();
     emit(state.copyWith(result: list));
+  }
+
+  List<ScanModel> _sort(List<ScanModel> data) {
+    switch (AppSharedPreference.getSortEnum) {
+      case SortEnum.n:
+        return data..sort((a, b) => (a.name).compareTo(b.name));
+      case SortEnum.date:
+        return data..sort((a, b) => (b.createdAt).compareTo(a.createdAt));
+      case SortEnum.amount:
+        return data..sort((a, b) => (b.amount).compareTo(a.amount));
+      case SortEnum.id:
+        return data..sort((a, b) => (b.id).compareTo(a.id));
+    }
+  }
+
+  void sort() {
+    switch (AppSharedPreference.getSortEnum) {
+      case SortEnum.n:
+        emit(state.copyWith(
+            result: state.result..sort((a, b) => (a.name).compareTo(b.name))));
+      case SortEnum.date:
+        emit(state.copyWith(
+            result: state.result..sort((a, b) => (b.createdAt).compareTo(a.createdAt))));
+      case SortEnum.amount:
+        emit(state.copyWith(
+            result: state.result..sort((a, b) => (b.amount).compareTo(a.amount))));
+      case SortEnum.id:
+        emit(
+            state.copyWith(result: state.result..sort((a, b) => (b.id).compareTo(a.id))));
+    }
   }
 
 //01030218087
@@ -130,7 +154,7 @@ class ScanCubit extends MCubit<ScanInitial> {
       if (!isClosed) {
         final data = (await getListCached()).map((e) => ScanModel.fromJson(e)).toList();
         data.removeWhere((e) => e.isDeleted);
-        final allScan = data..sort((a, b) => (b.createdAt).compareTo(a.createdAt));
+        final allScan = _sort(data);
 
         emit(state.copyWith(result: allScan));
       }

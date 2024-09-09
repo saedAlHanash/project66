@@ -50,26 +50,26 @@ class ScanModel {
     required this.id,
   });
 
-  final String scanNumber;
+  final num scanNumber;
   final String idNumber;
-  final String amount;
+  final num amount;
   String name;
-  final String id;
+  final num id;
   final bool isDeleted;
   final int createdAt;
   final int updatedAt;
 
-  Color get getColor => (amount.length <= 6)
+  Color get getColor => (amount.toString().length <= 6)
       ? Colors.black45
-      : (amount.length <= 9)
+      : (amount.toString().length <= 9)
           ? Colors.black
           : Colors.black;
 
   factory ScanModel.fromJson(Map<String, dynamic> json) {
     return ScanModel(
-      id: json["scanNumber"] ?? "",
+      id: num.tryParse(json["scanNumber"] ?? '0') ?? 0,
       isDeleted: json["isDeleted"] ?? false,
-      scanNumber: json["scanNumber"] ?? "",
+      scanNumber: num.tryParse(json["scanNumber"] ?? '0') ?? 0,
       idNumber: json["idNumber"] ?? "",
       createdAt: (json["createdAt"] is int)
           ? json['createdAt']
@@ -79,19 +79,19 @@ class ScanModel {
           ? json['updatedAt']
           : ((json["updatedAt"] ?? Timestamp.fromMillisecondsSinceEpoch(0)) as Timestamp)
               .millisecondsSinceEpoch,
-      amount: json["amount"] ?? "",
+      amount: num.tryParse(json["amount"] ?? '0') ?? 0,
       name: json["name"] ?? "",
     );
   }
 
   Map<String, dynamic> toJson() => {
-        "id": scanNumber,
+        "id": scanNumber.toString(),
         "isDeleted": isDeleted,
-        "scanNumber": scanNumber,
+        "scanNumber": scanNumber.toString(),
         "idNumber": idNumber,
         "createdAt": createdAt,
         "updatedAt": updatedAt,
-        "amount": amount,
+        "amount": amount.toString(),
         "name": name,
       };
 }

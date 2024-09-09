@@ -2,7 +2,7 @@ import 'dart:convert';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
+
 import 'package:project66/core/app/app_provider.dart';
 import 'package:project66/core/strings/enum_manager.dart';
 
@@ -17,43 +17,14 @@ class FirebaseService {
       await Firebase.initializeApp(
         options: DefaultFirebaseOptions.currentPlatform,
       );
-      await getFireTokenAsync();
-      setListener();
+
       refreshToken(AppSharedPreference.getFireToken);
     } catch (e) {
       loggerObject.e('Firebase.initializeApp: $e');
     }
   }
 
-  static void setListener() {
-    FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
-    FirebaseMessaging.instance.onTokenRefresh.listen((event) {
-      refreshToken(event);
-    });
-
-    FirebaseMessaging.onMessage.listen((message) {
-      final notification = message.notification;
-      String title = '';
-      String body = '';
-      FirebaseNotificationModel? model;
-      if (notification != null) {
-        title = notification.title ?? '';
-        body = notification.body ?? '';
-      } else {
-        model = FirebaseNotificationModel.fromJson(message.data);
-
-        title = model.notification.title;
-        body = model.notification.body;
-      }
-
-      Note.showBigTextNotification(
-        payload: model != null ? jsonEncode(model) : null,
-        title: title,
-        body: body,
-      );
-    });
-  }
 
   static String get getFireTokenFromCache {
     final cashedToken = AppSharedPreference.getFireToken;
@@ -99,33 +70,7 @@ class FirebaseService {
     );
     }
 
-  static Future<String> getFireTokenAsync({bool reNew = false}) async {
-    final cashedToken = AppSharedPreference.getFireToken;
 
-    if (cashedToken.isNotEmpty) return cashedToken;
-
-    final token = await FirebaseMessaging.instance.getToken();
-
-    if (token != null) AppSharedPreference.cashFireToken(token);
-
-    return token ?? '';
-  }
-
-  static Future<void> requestPermissions() async {
-    try {
-      FirebaseMessaging.instance.requestPermission(
-        alert: true,
-        announcement: false,
-        badge: true,
-        carPlay: false,
-        criticalAlert: false,
-        provisional: false,
-        sound: true,
-      );
-    } on Exception {
-      loggerObject.e('error FCM ios ');
-    }
-  }
 
   static void refreshToken(String token) {
     if (AppProvider.isNotLogin || token.isEmpty) return;
@@ -136,28 +81,6 @@ class FirebaseService {
   }
 }
 
-@pragma('vm:entry-point')
-Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
-
-  final notification = message.notification;
-
-  String title = '';
-  String body = '';
-
-  if (notification != null) {
-    title = notification.title ?? '';
-    body = notification.body ?? '';
-  } else {
-    final model = FirebaseNotificationModel.fromJson(message.data);
-
-    title = model.notification.title;
-    body = model.notification.body;
-  }
-  Note.showBigTextNotification(title: title, body: body);
-}
 
 class FirebaseNotificationModel {
   FirebaseNotificationModel({

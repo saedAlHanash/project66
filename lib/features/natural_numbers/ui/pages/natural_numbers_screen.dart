@@ -44,17 +44,7 @@ class HomeScreen extends StatelessWidget {
                   .map(
                     (e) => [
                       e.name,
-                      Directionality(
-                        textDirection: TextDirection.ltr,
-                        child: DrawableText(
-                          size: 12.0.sp,
-                          matchParent: true,
-                          maxLines: 2,
-                          color: e.id.length < 11 ? Colors.amber : null,
-                          textAlign: TextAlign.center,
-                          text: e.id.secure,
-                        ),
-                      ),
+                      e.id.secure,
                       InkWell(
                         onTap: () {
                           NoteMessage.showCheckDialog(

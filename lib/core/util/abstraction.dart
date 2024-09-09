@@ -188,7 +188,6 @@ abstract class MCubit<AbstractState> extends Cubit<AbstractState> {
 
       emit(s);
 
-      showErrorFromApi(s);
       onError?.call();
     } else {
       await storeData(pair.first);

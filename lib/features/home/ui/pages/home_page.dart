@@ -4,6 +4,7 @@ import 'package:project66/core/widgets/app_bar/app_bar_widget.dart';
 import '../../../natural_numbers/ui/pages/natural_numbers_screen.dart';
 import '../widget/bottom_nav_widget.dart';
 import '../../../scan/ui/pages/scan_view.dart';
+import 'menu_screen.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -55,6 +56,7 @@ class _HomePageState extends State<HomePage> {
             children: const [
               HomeScreen(),
               ScanPage(),
+              MenuScreen(),
             ],
           ),
         ),

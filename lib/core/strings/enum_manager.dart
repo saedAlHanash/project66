@@ -291,3 +291,23 @@ enum CriterionGroup {
     }
   }
 }
+
+enum SortEnum {
+  date,
+  n,
+  amount,
+  id;
+
+  String get name {
+      switch (this) {
+        case SortEnum.n:
+          return 'حسب الاسم';
+        case SortEnum.date:
+          return 'حسب تاريخ الإضافة';
+        case SortEnum.amount:
+          return 'حسب عدد الأسهم';
+        case SortEnum.id:
+          return 'حسب رقم السند';
+      }
+  }
+}

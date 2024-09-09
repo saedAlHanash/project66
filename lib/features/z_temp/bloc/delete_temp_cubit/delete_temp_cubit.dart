@@ -22,7 +22,7 @@ class DeleteTempCubit extends Cubit<DeleteTempInitial> {
 
     if (pair.first == null) {
       emit(state.copyWith(error: pair.second, statuses: CubitStatuses.error));
-      showErrorFromApi(state);
+
     } else {
       emit(state.copyWith(statuses: CubitStatuses.done, result: pair.first));
     }
@@ -38,7 +38,7 @@ class DeleteTempCubit extends Cubit<DeleteTempInitial> {
     if (response.statusCode.success) {
       return Pair(true, null);
     } else {
-      return response.getPairError;
+      return Pair(null,null);
     }
   }
 }

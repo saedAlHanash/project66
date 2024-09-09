@@ -23,6 +23,7 @@ class SearchDialog extends StatefulWidget {
 class _SearchDialogState extends State<SearchDialog> {
   ScanCubit get cubit => context.read<ScanCubit>();
   var name = '';
+
   var id = '';
 
   @override
@@ -42,7 +43,7 @@ class _SearchDialogState extends State<SearchDialog> {
             ),
             5.0.verticalSpace,
             DrawableText(
-              text: 'اسم الشخص الذي تبحث عنه',
+              text: 'البحث عن ',
               fontFamily: FontManager.cairoBold.name,
               size: 20.0.sp,
             ),
@@ -50,6 +51,12 @@ class _SearchDialogState extends State<SearchDialog> {
             MyTextFormOutLineWidget(
               titleLabel: "الاسم",
               onChanged: (p0) => name = p0,
+            ),
+            5.0.verticalSpace,
+            MyTextFormOutLineWidget(
+              titleLabel: "الرقم الوطني",
+              keyBordType: TextInputType.number,
+              onChanged: (p0) => id = p0,
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
@@ -68,11 +75,14 @@ class _SearchDialogState extends State<SearchDialog> {
                   builder: (context, state) {
                     return TextButton(
                       onPressed: () {
-                        if (name.length < 3) return;
+                        if (name.length < 3 && id.length < 3) return;
+
                         final list = state.result.where((e) {
-                          return e.name.contains(name);
+                          final bName = name.isEmpty ? false : e.name.contains(name);
+                          final bId = id.isEmpty ? false : e.idNumber.contains(id);
+                          return bName || bId;
                         }).toList();
-                        loggerObject.w(list.length);
+
                         context.pop();
                         context.pushNamed(RouteName.search,
                             extra: list, queryParameters: {'name': name});
