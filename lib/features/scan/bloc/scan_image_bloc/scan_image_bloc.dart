@@ -10,7 +10,7 @@ import 'package:project66/core/util/snack_bar_message.dart';
 import '../../../../core/api_manager/api_service.dart';
 import '../../../../core/app/app_widget.dart';
 import '../../../../core/strings/enum_manager.dart';
-import '../../../../core/util/abstraction.dart';
+import 'package:m_cubit/abstraction.dart';
 import '../../../natural_numbers/bloc/natural_numbers/natural_numbers_cubit.dart';
 import '../../data/scan.dart';
 import '../../data/scan_image.dart';

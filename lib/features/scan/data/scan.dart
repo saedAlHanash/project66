@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:project66/core/api_manager/api_service.dart';
 
 class NaturalNumber {
   NaturalNumber({
@@ -47,6 +48,7 @@ class ScanModel {
     required this.updatedAt,
     required this.amount,
     required this.name,
+    required this.storeVersion,
     required this.id,
   });
 
@@ -55,6 +57,7 @@ class ScanModel {
   final num amount;
   String name;
   final num id;
+  final num storeVersion;
   final bool isDeleted;
   final int createdAt;
   final int updatedAt;
@@ -68,6 +71,7 @@ class ScanModel {
   factory ScanModel.fromJson(Map<String, dynamic> json) {
     return ScanModel(
       id: num.tryParse(json["scanNumber"] ?? '0') ?? 0,
+      storeVersion: json["storeVersion"] ?? 0,
       isDeleted: json["isDeleted"] ?? false,
       scanNumber: num.tryParse(json["scanNumber"] ?? '0') ?? 0,
       idNumber: json["idNumber"] ?? "",
@@ -87,6 +91,7 @@ class ScanModel {
   Map<String, dynamic> toJson() => {
         "id": scanNumber.toString(),
         "isDeleted": isDeleted,
+        "storeVersion": storeVersion,
         "scanNumber": scanNumber.toString(),
         "idNumber": idNumber,
         "createdAt": createdAt,

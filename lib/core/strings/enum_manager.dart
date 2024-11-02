@@ -8,7 +8,7 @@ import '../../generated/l10n.dart';
 import '../app/app_widget.dart';
 import 'app_color_manager.dart';
 
-enum CubitStatuses { init, loading, done, error }
+// enum CubitStatuses { init, loading, done, error }
 
 enum ProfileCard {
   trips,
@@ -299,15 +299,51 @@ enum SortEnum {
   id;
 
   String get name {
-      switch (this) {
-        case SortEnum.n:
-          return 'حسب الاسم';
-        case SortEnum.date:
-          return 'حسب تاريخ الإضافة';
-        case SortEnum.amount:
-          return 'حسب عدد الأسهم';
-        case SortEnum.id:
-          return 'حسب رقم السند';
-      }
+    switch (this) {
+      case SortEnum.n:
+        return 'حسب الاسم';
+      case SortEnum.date:
+        return 'حسب تاريخ الإضافة';
+      case SortEnum.amount:
+        return 'حسب عدد الأسهم';
+      case SortEnum.id:
+        return 'حسب رقم السند';
+    }
+  }
+}
+
+//
+enum StoreEnum {
+  store1,
+  store2,
+  store3,
+  store4,
+  store5,
+  store6,
+  store7,
+  store8,
+  store9;
+
+  String get name {
+    switch (this) {
+      case StoreEnum.store1:
+        return 'التخزين 1';
+      case StoreEnum.store2:
+        return 'التخزين 2';
+      case StoreEnum.store3:
+        return 'التخزين 3';
+      case StoreEnum.store4:
+        return 'التخزين 4';
+      case StoreEnum.store5:
+        return 'التخزين 5';
+      case StoreEnum.store6:
+        return 'التخزين 6';
+      case StoreEnum.store7:
+        return 'التخزين 7';
+      case StoreEnum.store8:
+        return 'التخزين 8';
+      case StoreEnum.store9:
+        return 'التخزين 9';
+    }
   }
 }

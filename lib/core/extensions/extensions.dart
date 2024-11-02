@@ -1,23 +1,15 @@
-import 'dart:convert';
-
 import 'package:drawable_text/drawable_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:http/http.dart' as http;
 import 'package:intl/intl.dart';
+import 'package:m_cubit/abstraction.dart';
 import 'package:project66/core/strings/app_color_manager.dart';
-import 'package:project66/core/strings/fix_url.dart';
 
 import '../../generated/l10n.dart';
-
-import '../app/app_widget.dart';
-import '../error/error_manager.dart';
 import '../strings/enum_manager.dart';
-import '../util/pair_class.dart';
 import '../util/snack_bar_message.dart';
 import '../widgets/spinner_widget.dart';
-
 
 extension SplitByLength on String {
   List<String> splitByLength1(int length, {bool ignoreEmpty = false}) {
@@ -107,7 +99,6 @@ extension StringHelper on String? {
     return this!.trim().isEmpty;
   }
 
-
   num get tryParseOrZero => num.tryParse(this ?? '0') ?? 0;
 
   int get tryParseOrZeroInt => int.tryParse(this ?? '0') ?? 0;
@@ -165,7 +156,6 @@ extension HelperJson on Map<String, dynamic> {
   }
 }
 
-
 extension EnumHelper on Enum {
   String get getName {
     switch (this) {
@@ -182,7 +172,7 @@ extension ListEnumHelper<T> on List {
   List<SpinnerItem> getSpinnerItems({int? selectedId, Widget? icon}) {
     return List<SpinnerItem>.from(
       map(
-            (e) => SpinnerItem(
+        (e) => SpinnerItem(
           id: e.index,
           isSelected: e.index == selectedId,
           name: e.name,

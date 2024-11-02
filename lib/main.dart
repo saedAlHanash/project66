@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:m_cubit/caching_service/caching_service.dart';
 import 'package:project66/services/app_info_service.dart';
 
 import 'package:project66/services/caching_service/caching_service.dart';
@@ -22,7 +23,11 @@ void main() async {
     AppSharedPreference.init(value);
   });
 
-  await CachingService.initial();
+  await CachingService.initial(
+    onError: (state) {},
+    version: 3,
+    timeInterval: 120,
+  );
 
   await FirebaseService.initial();
   await AppInfoService.initial();

@@ -23,4 +23,12 @@ class ScanImageInitial extends AbstractState<List<ScanImageModel>> {
       result: result ?? this.result,
     );
   }
+
+  @override
+  List<Object?> get props => [
+        statuses,
+        error,
+        result,
+        if (request != null) request,
+      ];
 }

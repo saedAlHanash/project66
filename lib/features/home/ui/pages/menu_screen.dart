@@ -24,9 +24,14 @@ import '../../../../core/strings/enum_manager.dart';
 import '../../../../core/widgets/spinner_widget.dart';
 import '../../../../services/app_info_service.dart';
 
-class MenuScreen extends StatelessWidget {
+class MenuScreen extends StatefulWidget {
   const MenuScreen({super.key});
 
+  @override
+  State<MenuScreen> createState() => _MenuScreenState();
+}
+
+class _MenuScreenState extends State<MenuScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -80,6 +85,41 @@ class MenuScreen extends StatelessWidget {
               name: 'تغيير آلية الترتيب',
               subTitle: 'اسم,رقم السند,عدد الأسهم,تاريخ الإضافة ',
               image: Assets.iconsSort,
+            ),
+            ItemMenu(
+              onTap: () {
+                NoteMessage.showMyDialog(
+                  context,
+                  child: Padding(
+                    padding: const EdgeInsets.all(30.0).r,
+                    child: Column(
+                      children: [
+                        const DrawableText(text: 'إصدار المسح'),
+                        20.0.verticalSpace,
+                        SpinnerWidget(
+                          items: StoreEnum.values.getSpinnerItems(
+                              selectedId: AppSharedPreference.getStoreEnum.index),
+                          onChanged: (spinnerItem) {
+                            AppSharedPreference.cashStoreEnum(spinnerItem.item).then(
+                              (value) {
+                                context.read<ScanCubit>().sort();
+                                setState(() {
+                                  context.pop();
+                                });
+                              },
+                            );
+                          },
+                          hintText:
+                              '${S.of(context).choosing} ${S.of(context).educationalGrade}',
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+              name: 'تغيير إصدار المسح( ${AppSharedPreference.getStoreEnum.name})',
+              subTitle: 'تنبيه بتغيير اصدار المسح سيتم تغير مكان التخزين ',
+              image: Icons.storage,
             ),
             ItemMenu(
               onTap: () {},

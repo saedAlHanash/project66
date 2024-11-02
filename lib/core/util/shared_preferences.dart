@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
-
 import '../strings/enum_manager.dart';
 
 class AppSharedPreference {
@@ -13,10 +12,10 @@ class AppSharedPreference {
   static const _fireToken = '3';
   static const _lang = '4';
   static const _screenType = '5';
+  static const _store = '_store';
   static const _user = '6';
   static const _isShowIntro = '7';
   static const _resendTime = '8';
-
 
   static Future<void> setResendDateTime(int s) async {
     final d = DateTime.now().add(Duration(seconds: s));
@@ -36,7 +35,6 @@ class AppSharedPreference {
   }
 
   static String get getToken => _prefs.getString(_token) ?? '';
-
 
   static void cashFireToken(String token) {
     _prefs.setString(_fireToken, token);
@@ -65,12 +63,17 @@ class AppSharedPreference {
     await _prefs.remove(_phoneNumber);
   }
 
-  static Future<void>  cashSortEnum(SortEnum type) async {
+  static Future<void> cashSortEnum(SortEnum type) async {
     await _prefs.setInt(_screenType, type.index);
   }
 
-  static SortEnum get getSortEnum =>
-      SortEnum.values[_prefs.getInt(_screenType) ?? 0];
+  static SortEnum get getSortEnum => SortEnum.values[_prefs.getInt(_screenType) ?? 0];
+
+  static Future<void> cashStoreEnum(StoreEnum type) async {
+    await _prefs.setInt(_store, type.index);
+  }
+
+  static StoreEnum get getStoreEnum => StoreEnum.values[_prefs.getInt(_store) ?? 0];
 
   static Future<void> clear() async => await _prefs.clear();
 

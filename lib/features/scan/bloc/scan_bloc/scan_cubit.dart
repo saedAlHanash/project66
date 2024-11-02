@@ -9,7 +9,7 @@ import 'package:project66/core/util/snack_bar_message.dart';
 import '../../../../core/api_manager/api_service.dart';
 import '../../../../core/app/app_widget.dart';
 import '../../../../core/strings/enum_manager.dart';
-import '../../../../core/util/abstraction.dart';
+import 'package:m_cubit/abstraction.dart';
 import '../../../natural_numbers/bloc/natural_numbers/natural_numbers_cubit.dart';
 import '../../data/scan.dart';
 
@@ -25,12 +25,15 @@ class ScanCubit extends MCubit<ScanInitial> {
   String get filter => '';
 
   Future<void> getScan() async {
-    final data = (await getListCached()).map((e) => ScanModel.fromJson(e)).toList();
+    final data = await getListCached(fromJson: ScanModel.fromJson);
+
     data.removeWhere((e) => e.isDeleted);
     final noName = data.where((e) => e.name.isEmpty);
     final names = ctx!.read<NaturalNumbersCubit>().state.result;
+
     noName.map((e) {
-      final name = names.firstWhereOrNull((eName) => e.id.toString() == eName.id)?.name ?? '';
+      final name =
+          names.firstWhereOrNull((eName) => e.id.toString() == eName.id)?.name ?? '';
       if (name.isNotEmpty) {
         updateName(e.id.toString(), name);
       }
@@ -46,7 +49,10 @@ class ScanCubit extends MCubit<ScanInitial> {
   }
 
   Future<void> delete(num scanNumber) async {
-    await FirebaseFirestore.instance.collection('scan').doc(scanNumber.toString()).update({
+    await FirebaseFirestore.instance
+        .collection('scan')
+        .doc(scanNumber.toString())
+        .update({
       'isDeleted': true,
       'updatedAt': FieldValue.serverTimestamp(),
     });
@@ -76,6 +82,7 @@ class ScanCubit extends MCubit<ScanInitial> {
       scanNumber: num.tryParse(scanNumber) ?? 0,
       createdAt: 0,
       updatedAt: 0,
+      storeVersion: AppSharedPreference.getStoreEnum.index,
       id: 0,
       idNumber: idNumber,
       amount: num.tryParse(amount) ?? 0,
@@ -133,7 +140,8 @@ class ScanCubit extends MCubit<ScanInitial> {
         .where(
           'updatedAt',
           isGreaterThan: Timestamp.fromMillisecondsSinceEpoch(
-              state.result.firstOrNull?.updatedAt ?? 0),
+            state.result.firstOrNull?.updatedAt ?? 0,
+          ),
         );
 
     loggerObject.i('requested get scan ');
@@ -144,15 +152,19 @@ class ScanCubit extends MCubit<ScanInitial> {
         .i(DateTime.fromMillisecondsSinceEpoch(state.result.lastOrNull?.updatedAt ?? 0));
 
     await state.stream?.cancel();
+
     final stream = query.snapshots().listen((snapshot) async {
-      final model = snapshot.docs.map((doc) => ScanModel.fromJson(doc.data()));
+      final model = snapshot.docs.map((doc) => ScanModel.fromJson(doc.data())).toList();
 
       if (model.isEmpty) return;
 
-      await storeData(model);
+      await saveData(
+        model,
+        clearId: false,
+      );
 
       if (!isClosed) {
-        final data = (await getListCached()).map((e) => ScanModel.fromJson(e)).toList();
+        final data = await getListCached(fromJson: ScanModel.fromJson);
         data.removeWhere((e) => e.isDeleted);
         final allScan = _sort(data);
 
@@ -169,4 +181,6 @@ class ScanCubit extends MCubit<ScanInitial> {
     state.stream?.cancel();
     return () {};
   }
+
+  void updateScreen() {}
 }

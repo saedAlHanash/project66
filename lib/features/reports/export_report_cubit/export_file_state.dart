@@ -1,6 +1,6 @@
 part of 'export_file_cubit.dart';
 
-class ExportReportInitial extends AbstractState<bool>   {
+class ExportReportInitial extends AbstractState<bool> {
   var excel = Excel.createExcel();
 
   Sheet getSheet(String name) => excel[name];
@@ -32,4 +32,12 @@ class ExportReportInitial extends AbstractState<bool>   {
       error: error ?? this.error,
     );
   }
+
+  @override
+  List<Object?> get props => [
+        statuses,
+        error,
+        result,
+        if (request != null) request,
+      ];
 }

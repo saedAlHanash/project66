@@ -17,7 +17,7 @@ import 'package:uuid/uuid.dart';
 import '../../../../core/app/app_widget.dart';
 import '../../../../core/strings/app_string_manager.dart';
 import '../../../../core/strings/enum_manager.dart';
-import '../../../../core/util/abstraction.dart';
+import 'package:m_cubit/abstraction.dart';
 import '../../../../generated/l10n.dart';
 import '../../../core/api_manager/api_service.dart';
 

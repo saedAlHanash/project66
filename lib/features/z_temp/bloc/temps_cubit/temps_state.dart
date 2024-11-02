@@ -38,7 +38,6 @@ class TempsInitial extends AbstractState<List<Temp>> {
       statuses: statuses ?? this.statuses,
       result: result ?? this.result,
       error: error ?? this.error,
-      filterRequest: filterRequest ?? this.filterRequest,
       request: request ?? this.request,
     );
   }

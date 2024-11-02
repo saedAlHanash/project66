@@ -13,6 +13,7 @@ import 'package:project66/features/reports/export_report_cubit/export_file_cubit
 import 'package:project66/features/scan/bloc/scan_image_bloc/scan_image_bloc.dart';
 
 import '../../../../core/app/app_widget.dart';
+import '../../../../core/util/shared_preferences.dart';
 import '../../../../generated/assets.dart';
 import '../../bloc/scan_bloc/scan_cubit.dart';
 import '../widget/search_dialog.dart';
@@ -63,9 +64,15 @@ class _ScanPageState extends State<ScanPage> {
             10.0.horizontalSpace,
             Expanded(
               child: MyButton(
-                onTap: () => context
-                    .read<ExportReportCubit>()
-                    .export(list: context.read<ScanCubit>().state.result),
+                onTap: () => context.read<ExportReportCubit>().export(
+                      list: context
+                          .read<ScanCubit>()
+                          .state
+                          .result
+                          .where((e) =>
+                              e.storeVersion == AppSharedPreference.getStoreEnum.index)
+                          .toList(),
+                    ),
                 text: 'تصدير',
                 iconStart: Icons.import_export,
               ),
@@ -78,51 +85,65 @@ class _ScanPageState extends State<ScanPage> {
         padding: const EdgeInsets.all(15.0).r,
         child: BlocBuilder<ScanCubit, ScanInitial>(
           builder: (context, state) {
-            return SaedTableWidget(
-              height: 1.0.sh,
-              title: const [
-                'رقم',
-                'اسم',
-                'اسهم',
-                '',
-              ],
-              weights: const [4, 6, 8, 3],
-              data: state.result
-                  .map(
-                    (e) => [
-                      e.scanNumber.toString(),
-                      e.name,
-                      e.amount.formatPrice,
-                      InkWell(
-                        onTap: () {
-                          NoteMessage.showCheckDialog(
-                            ctx!,
-                            text: 'تأكيد الحذف',
-                            textButton: 'حذف',
-                            image: ImageMultiType(
-                              url: Icons.delete,
-                              height: 80.0.r,
-                              width: 80.0.r,
-                              color: Colors.red,
-                            ),
-                            onConfirm: () {
-                              context.read<ScanCubit>().delete(e.scanNumber);
-                            },
-                          );
-                        },
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0).r,
-                          child: const ImageMultiType(
-                            url: Assets.iconsXCancle,
-                          ),
-                        ),
-                      ),
+            final list = state.result.where(
+              (e) => e.storeVersion == AppSharedPreference.getStoreEnum.index,
+            );
+            return Column(
+              children: [
+                Expanded(
+                  child: SaedTableWidget(
+                    height: 1.0.sh,
+                    title: const [
+                      'رقم',
+                      'اسم',
+                      'أسهم',
+                      'إصدار',
+                      '',
                     ],
-                  )
-                  .toList()
-                ..add([
-                  state.result.map((e) => e.amount).reduce((a, b) => a + b).formatPrice
-                ]),
+                    weights: const [4, 6, 8, 3, 3],
+                    data: list
+                        .map(
+                          (e) => [
+                            e.scanNumber.toString(),
+                            e.name,
+                            e.amount.formatPrice,
+                            (e.storeVersion + 1).toString(),
+                            InkWell(
+                              onTap: () {
+                                NoteMessage.showCheckDialog(
+                                  ctx!,
+                                  text: 'تأكيد الحذف',
+                                  textButton: 'حذف',
+                                  image: ImageMultiType(
+                                    url: Icons.delete,
+                                    height: 80.0.r,
+                                    width: 80.0.r,
+                                    color: Colors.red,
+                                  ),
+                                  onConfirm: () {
+                                    context.read<ScanCubit>().delete(e.scanNumber);
+                                  },
+                                );
+                              },
+                              child: Padding(
+                                padding: const EdgeInsets.all(8.0).r,
+                                child: const ImageMultiType(
+                                  url: Assets.iconsXCancle,
+                                ),
+                              ),
+                            ),
+                          ],
+                        )
+                        .toList()
+                      ..add([
+                        if (list.isEmpty)
+                          ''
+                        else
+                          list.map((e) => e.amount).reduce((a, b) => a + b).formatPrice
+                      ]),
+                  ),
+                ),
+              ],
             );
           },
         ),

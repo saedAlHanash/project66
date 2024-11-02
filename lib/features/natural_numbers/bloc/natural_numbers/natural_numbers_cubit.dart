@@ -7,7 +7,7 @@ import 'package:project66/core/util/snack_bar_message.dart';
 import '../../../../core/api_manager/api_service.dart';
 import '../../../../core/app/app_widget.dart';
 import '../../../../core/strings/enum_manager.dart';
-import '../../../../core/util/abstraction.dart';
+import 'package:m_cubit/abstraction.dart';
 import '../../data/natural_number.dart';
 
 part 'natural_numbers_state.dart';
@@ -22,7 +22,7 @@ class NaturalNumbersCubit extends MCubit<NaturalNumbersInitial> {
   String get filter => '';
 
   Future<void> getNumber() async {
-    final data = (await getListCached()).map((e) => NaturalNumber.fromJson(e)).toList();
+    final data = (await getListCached(fromJson: NaturalNumber.fromJson));
     data.removeWhere((e) => e.isDeleted);
 
     final allNaturalNumbers = data..sort((a, b) => (b.createdAt).compareTo(a.createdAt));
@@ -87,11 +87,13 @@ class NaturalNumbersCubit extends MCubit<NaturalNumbersInitial> {
 
       if (model.isEmpty) return;
 
-      await storeData(model);
+      await saveData(
+        model,
+        clearId: false,
+      );
 
       if (!isClosed) {
-        final data =
-            (await getListCached()).map((e) => NaturalNumber.fromJson(e)).toList();
+        final data = (await getListCached(fromJson: NaturalNumber.fromJson));
         data.removeWhere((e) => e.isDeleted);
 
         final allNaturalNumbers = data
