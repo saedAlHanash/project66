@@ -1,6 +1,6 @@
 part of 'loading_cubit.dart';
 
-class LoadingInitial extends Equatable {
+class LoadingInitial {
   final bool isLoading;
 
   const LoadingInitial({required this.isLoading});
@@ -8,9 +8,6 @@ class LoadingInitial extends Equatable {
   factory LoadingInitial.initial() {
     return const LoadingInitial(isLoading: false);
   }
-
-  @override
-  List<Object> get props => [isLoading];
 
   LoadingInitial copyWith({
     bool? isLoading,
