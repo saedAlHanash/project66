@@ -10,6 +10,7 @@ import 'package:project66/features/scan/bloc/scan_bloc/scan_cubit.dart';
 import 'package:project66/router/go_router.dart';
 
 import '../../../../core/strings/app_color_manager.dart';
+import '../../../../core/util/shared_preferences.dart';
 import '../../../../core/widgets/my_text_form_widget.dart';
 import '../../../../generated/assets.dart';
 
@@ -78,9 +79,13 @@ class _SearchDialogState extends State<SearchDialog> {
                         if (name.length < 3 && id.length < 3) return;
 
                         final list = state.result.where((e) {
-                          final bName = name.isEmpty ? false : e.name.contains(name);
-                          final bId = id.isEmpty ? false : e.idNumber.contains(id);
-                          return bName || bId;
+                          final bName =
+                              name.isEmpty ? false : e.name.contains(name);
+                          final bId =
+                              id.isEmpty ? false : e.idNumber.contains(id);
+                          return (bName || bId) &&
+                              e.storeVersion ==
+                                  AppSharedPreference.getStoreEnum.index;
                         }).toList();
 
                         context.pop();

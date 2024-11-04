@@ -26,7 +26,9 @@ class SearchPage extends StatelessWidget {
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.only(bottom: 10.0, right: 20.0, left: 20.0),
         child: MyButton(
-          onTap: () => context.read<ExportReportCubit>().export(list: list, name: name),
+          onTap: () => context
+              .read<ExportReportCubit>()
+              .export(listData: list, name: name),
           text: 'تصدير',
           iconStart: Icons.import_export,
         ),
@@ -75,9 +77,13 @@ class SearchPage extends StatelessWidget {
                   ),
                 ],
               )
-              .toList()..add([
-            list.map((e) => e.amount).reduce((a, b) => a + b).formatPrice
-          ]),
+              .toList()
+            ..add([
+              if (list.isEmpty)
+                ''
+              else
+                list.map((e) => e.amount).reduce((a, b) => a + b).formatPrice
+            ]),
         ),
       ),
     );

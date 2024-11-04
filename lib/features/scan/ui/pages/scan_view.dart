@@ -65,13 +65,7 @@ class _ScanPageState extends State<ScanPage> {
             Expanded(
               child: MyButton(
                 onTap: () => context.read<ExportReportCubit>().export(
-                      list: context
-                          .read<ScanCubit>()
-                          .state
-                          .result
-                          .where((e) =>
-                              e.storeVersion == AppSharedPreference.getStoreEnum.index)
-                          .toList(),
+                      listData: context.read<ScanCubit>().state.result.toList(),
                     ),
                 text: 'تصدير',
                 iconStart: Icons.import_export,
@@ -121,7 +115,9 @@ class _ScanPageState extends State<ScanPage> {
                                     color: Colors.red,
                                   ),
                                   onConfirm: () {
-                                    context.read<ScanCubit>().delete(e.scanNumber);
+                                    context
+                                        .read<ScanCubit>()
+                                        .delete(e.scanNumber);
                                   },
                                 );
                               },
@@ -139,7 +135,10 @@ class _ScanPageState extends State<ScanPage> {
                         if (list.isEmpty)
                           ''
                         else
-                          list.map((e) => e.amount).reduce((a, b) => a + b).formatPrice
+                          list
+                              .map((e) => e.amount)
+                              .reduce((a, b) => a + b)
+                              .formatPrice
                       ]),
                   ),
                 ),

@@ -20,6 +20,7 @@ import '../../../../core/strings/enum_manager.dart';
 import 'package:m_cubit/abstraction.dart';
 import '../../../../generated/l10n.dart';
 import '../../../core/api_manager/api_service.dart';
+import '../../../core/util/shared_preferences.dart';
 
 part 'export_file_state.dart';
 
@@ -48,7 +49,8 @@ class ExportReportCubit extends Cubit<ExportReportInitial> {
       File(join('/storage/emulated/0/Documents/Project66/$fName.xlsx'))
         ..createSync(recursive: true)
         ..writeAsBytesSync(state.excel.save() ?? []);
-      NoteMessage.showSuccessSnackBar(message: 'تم التصدير بنجاح', context: ctx!);
+      NoteMessage.showSuccessSnackBar(
+          message: 'تم التصدير بنجاح', context: ctx!);
     } catch (e) {
       loggerObject.e(e);
       emit(state.copyWith(statuses: CubitStatuses.error, error: e.toString()));
@@ -83,9 +85,12 @@ class ExportReportCubit extends Cubit<ExportReportInitial> {
   }
 
   void export({
-    required List<ScanModel> list,
+    required List<ScanModel> listData,
     String? name,
   }) async {
+    final list = listData
+        .where((e) => e.storeVersion == AppSharedPreference.getStoreEnum.index)
+        .toList();
     state.excel = Excel.createExcel();
 
     if (list.isEmpty) {
